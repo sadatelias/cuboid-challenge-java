@@ -1,8 +1,11 @@
 package co.fullstacklabs.cuboid.challenge.controller;
 
-import co.fullstacklabs.cuboid.challenge.ApplicationConfig;
-import co.fullstacklabs.cuboid.challenge.dto.NewBagDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.assertj.core.api.Assertions;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -13,9 +16,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import co.fullstacklabs.cuboid.challenge.ApplicationConfig;
+import co.fullstacklabs.cuboid.challenge.dto.NewBagDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -54,12 +58,12 @@ class BagControllerTest {
 
     @Test
     void shouldCreateNewBag() throws Exception {
-        NewBagDTO resource = NewBagDTO.builder().title("title new").volume(10d).build();
+        NewBagDTO resource = NewBagDTO.builder().title("title_new").volume(10d).build();
 
-        this.mockMvc.perform(post(BAG_PATH).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post(BAG_PATH).contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(resource)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.title", Is.is(resource.getTitle())));
     }
 

@@ -1,8 +1,8 @@
 package co.fullstacklabs.cuboid.challenge.service;
 
-import co.fullstacklabs.cuboid.challenge.dto.CuboidDTO;
-
 import java.util.List;
+
+import co.fullstacklabs.cuboid.challenge.dto.CuboidDTO;
 
 /**
  * @author FullStack Labs
@@ -14,4 +14,7 @@ public interface CuboidService {
 
     List<CuboidDTO> getAll();
 
+    CuboidDTO update(CuboidDTO cuboid);
+    
+    CuboidDTO delete(CuboidDTO cuboid);
 }
