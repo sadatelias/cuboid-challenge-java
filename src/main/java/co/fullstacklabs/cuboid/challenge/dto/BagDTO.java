@@ -1,13 +1,16 @@
 package co.fullstacklabs.cuboid.challenge.dto;
 
-import lombok.*;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import co.fullstacklabs.cuboid.challenge.model.Bag;
-
-import javax.validation.constraints.Size;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -26,4 +29,18 @@ public class BagDTO {
     private Double payloadVolume;
     private Double availableVolume;
     private List<CuboidDTO> cuboids;
+    
+    public Double getPayloadVolume() {
+    	payloadVolume = 0d;
+    	for (CuboidDTO cuboidDTO : cuboids) {
+    		payloadVolume += cuboidDTO.getVolume();
+    	}
+    	return payloadVolume;
+    }
+    
+    public Double getAvailableVolume() {
+    	availableVolume = 0d;
+    	availableVolume = volume - getPayloadVolume();
+    	return availableVolume;
+    }
 }

@@ -1,19 +1,21 @@
 package co.fullstacklabs.cuboid.challenge.service.impl;
 
-import co.fullstacklabs.cuboid.challenge.dto.CuboidDTO;
-import co.fullstacklabs.cuboid.challenge.exception.ResourceNotFoundException;
-import co.fullstacklabs.cuboid.challenge.model.Bag;
-import co.fullstacklabs.cuboid.challenge.model.Cuboid;
-import co.fullstacklabs.cuboid.challenge.repository.BagRepository;
-import co.fullstacklabs.cuboid.challenge.repository.CuboidRepository;
-import co.fullstacklabs.cuboid.challenge.service.CuboidService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import co.fullstacklabs.cuboid.challenge.dto.CuboidDTO;
+import co.fullstacklabs.cuboid.challenge.exception.ResourceNotFoundException;
+import co.fullstacklabs.cuboid.challenge.exception.UnprocessableEntityException;
+import co.fullstacklabs.cuboid.challenge.model.Bag;
+import co.fullstacklabs.cuboid.challenge.model.Cuboid;
+import co.fullstacklabs.cuboid.challenge.repository.BagRepository;
+import co.fullstacklabs.cuboid.challenge.repository.CuboidRepository;
+import co.fullstacklabs.cuboid.challenge.service.CuboidService;
 
 /**
  * Implementation class for BagService
@@ -47,7 +49,14 @@ public class CuboidServiceImpl implements CuboidService {
     @Transactional
     public CuboidDTO create(CuboidDTO cuboidDTO) {
         Bag bag = getBagById(cuboidDTO.getBagId());
+        Double availableVolume = bag.getVolume();
+        for(Cuboid cuboid : bag.getCuboids()) {
+        	availableVolume -= cuboid.getDepth()*cuboid.getHeight()*cuboid.getWidth();
+        }
         Cuboid cuboid = mapper.map(cuboidDTO, Cuboid.class);
+        if (cuboidDTO.getVolume() > availableVolume) { 
+        	throw new UnprocessableEntityException("Bad does not have enough available space");
+        }
         cuboid.setBag(bag);
         cuboid = repository.save(cuboid);
         return mapper.map(cuboid, CuboidDTO.class);
